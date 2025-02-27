@@ -1,12 +1,31 @@
-// import { useState } from "react";
-// import reactLogo from "./assets/react.svg";
-// import viteLogo from "/vite.svg";
-import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router";
+import Home from "./pages/Home";
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Explore from "./pages/Explore";
+import About from "./pages/About";
+
+// Latest Blogs	/
+// Explore Blogs	/explore
+// Single Blog Page	/blog/:id
+// Categories	/category/:name
+// Create Blog	/create
+// About Page	/about
 
 function App() {
   return (
     <>
-      <h1 class="text-3xl font-bold underline">Hello world!</h1>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
