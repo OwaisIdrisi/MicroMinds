@@ -1,27 +1,40 @@
-# Node.js
+# Node.js dependencies
 node_modules/
+.npm/
 npm-debug.log
+yarn-debug.log
 yarn-error.log
+pnpm-debug.log
+lerna-debug.log
+
+# Build directories
+dist/
+dist-ssr/
+build/
 
 # Logs
 logs/
 *.log
 *.log.*
+*.out
+*.pid
+*.seed
+*.pid.lock
 
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional REPL history
-.node_repl_history
-
-# dotenv environment variables file
+# Environment variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Optional caches
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# Coverage (used by testing tools like Istanbul)
+coverage/
 
 # MacOS
 .DS_Store
@@ -30,29 +43,17 @@ jspm_packages/
 Thumbs.db
 ehthumbs.db
 
-# IDEs and editors
+# Editor settings
 .vscode/
 .idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-
-# Build directories
-dist/
-build/
+*.sw?
 
 # Temporary files
 tmp/
 temp/
 *.tmp
 *.temp
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# TypeScript
-*.tsbuildinfo
-
-# Optional stylelint cache
-.stylelintcache
