@@ -15,11 +15,13 @@ const loginController = {
 
         // validate the request
         const { username, email, password } = req.body
+        console.log(req.body);
+
         if (!username && !email) {
-            throw new ApiError(400, "username/email is required")
+            return res.status(400).json(new ApiError(400, [], "username/email is required"))
         }
         if (!password) {
-            throw new ApiError(400, "Password is required")
+            return res.status(400).json(new ApiError(400, [], "Password is required"))
         }
 
         // find user
