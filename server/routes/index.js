@@ -27,5 +27,6 @@ router.patch("/blog/cover-image/:id", authenticateUser, upload.single("cover"), 
 router.delete("/blog/:id", authenticateUser, blogController.deleteBlog)
 
 router.post("/blog/like/:id", authenticateUser, blogController.likeBlog)
+router.get("/blog/tag/:id", authenticateUser, blogController.getBlogsByTag)
 
 export default router

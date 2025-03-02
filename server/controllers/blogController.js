@@ -6,10 +6,12 @@ import { uploadOnCloudinary, getPublicIdFromUrl, destoyImage } from "../utils/cl
 
 const blogController = {
     async addBlog(req, res) {
-        const { title, content } = req.body
+        const { title, content, tags } = req.body
         if (title?.trim() === "" || content?.trim() === "") {
             return res.status(400).json(new ApiError(400, "Title and content cannot be empty"));
         }
+        const formattedTags = tags ? tags.map(tag => tag.trim().toLowerCase()) : []
+
         let coverLocalPath = req.file?.path
         if (!coverLocalPath) {
             return res.status(400).json(new ApiError(400, "Cover image is required"));
@@ -21,7 +23,7 @@ const blogController = {
             return res.status(404).json(new ApiError(404, "Creator not found"));
         }
 
-        const blog = new Blog({ title, content, creator: creator._id, creatorUsername: creator.username, cover, likes: [] })
+        const blog = new Blog({ title, content, creator: creator._id, creatorUsername: creator.username, cover, likes: [], formattedTags })
         try {
             const newBlog = await blog.save()
             return res.status(201).json(new ApiResponse(201, { newBlog, }, "Blog Created Successfully"))
@@ -151,6 +153,15 @@ const blogController = {
             }
         } catch (error) {
             console.log(error);
+            return res.status(500).json(new ApiError(500, error.message || "Internal server error"))
+        }
+    },
+    async getBlogsByTag(req, res) {
+        try {
+            const tag = req.params.tag.toLowerCase()
+            const blogs = await Blog.find({ tags: { $in: [new RegExp(`^${tag}$`, "i")] } });
+            return res.status(200).json(new ApiResponse(200, blogs, blogs.length ? "Success" : "No blogs found"));
+        } catch (error) {
             return res.status(500).json(new ApiError(500, error.message || "Internal server error"))
         }
     }
