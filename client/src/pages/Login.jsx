@@ -1,8 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "../api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
+  const { loginProvide } = useAuth();
+  const navigate = useNavigate();
   const [loginType, setLoginType] = useState("email");
   const [formData, setFormData] = useState({
     email: "",
@@ -16,7 +19,10 @@ export default function Login() {
   const loginHandler = async (e) => {
     e.preventDefault();
     const data = await login(formData);
+    // setUser(data);
     console.log(data);
+    loginProvide(data.userResponse);
+    navigate("/profile");
   };
 
   return (

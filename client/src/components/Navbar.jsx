@@ -1,9 +1,20 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
+  const user = JSON.parse(localStorage.getItem("user")) || null;
+  const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // useEffect(() => {
+  //   if (l) {
+  //     console.log(user);
+  //   } else {
+  //     console.log("no user");
+  //   }
+  // }, [user]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -36,14 +47,21 @@ export default function Navbar() {
             <Link to="/about" className="nav-link">
               About
             </Link>
-            <Link to="/login" className="nav-btn">
-              Login
-            </Link>
-            <Link to="/register" className="nav-btn-alt">
-              Sign Up
-            </Link>
+            {user ? (
+              <Link onClick={logout} to="/login" className="nav-btn">
+                Logout
+              </Link>
+            ) : (
+              <div className="flex gap-2">
+                <Link to="/login" className="nav-btn">
+                  Login
+                </Link>
+                <Link to="/register" className="nav-btn-alt">
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </div>
-
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button

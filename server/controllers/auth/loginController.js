@@ -15,7 +15,6 @@ const loginController = {
 
         // validate the request
         const { username, email, password } = req.body
-        console.log(req.body);
 
         if (!username && !email) {
             return res.status(400).json(new ApiError(400, [], "username/email is required"))
