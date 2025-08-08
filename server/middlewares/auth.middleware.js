@@ -5,7 +5,7 @@ import { User } from "../models/user.js";
 
 const authenticateUser = async (req, res, next) => {
     try {
-        const token = req.cookie?.accessToken || req.header("Authorization").split(" ")[1]
+        const token = req.cookies?.accessToken || req.header("Authorization").split(" ")[1]
         if (!token) throw new ApiError(401, "Unathorized request")
 
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)

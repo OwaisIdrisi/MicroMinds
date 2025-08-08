@@ -1,17 +1,16 @@
 import axios from "axios"
+import protectedRequest from "./protectedRequest ";
 
-
-const API = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL
+export const API = axios.create({
+    baseURL: import.meta.env.VITE_BASE_URL,
+    withCredentials: true,
 })
 
 
 export const login = async (data) => {
     console.log(import.meta.env.VITE_BASE_URL);
-
     const response = await API.post(`/login`, data)
     return response.data
-
 }
 
 export const register = async (data) => {
@@ -19,11 +18,18 @@ export const register = async (data) => {
     return response.data
 }
 
-export const logout = (async (token) => {
-    const response = await API.post(`/logout`, [], {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+export const logout = (async () => {
+    const response = await API.post(`/logout`)
     return response.data
 })
+
+export const getCurrentUser = () =>
+    protectedRequest(async () => {
+        const response = await API.get('/me')
+        return response.data
+    })
+
+export const refreshAccessToken = async () => {
+    const response = await API.post('/refresh-token')
+    return response.data
+}

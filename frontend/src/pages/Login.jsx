@@ -34,7 +34,7 @@ export default function Login() {
       setFormData({ email: "", password: "" });
       navigate("/");
     } catch (error) {
-      dispatch(loginFailure(error || "Login Failed "));
+      dispatch(loginFailure(error.message || "Login Failed "));
     }
   };
   const changeHandler = (e) => {

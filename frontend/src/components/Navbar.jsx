@@ -6,7 +6,6 @@ import Avatar from "./Avatar";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
-  console.log(user.avatar);
   const token = localStorage.getItem("token") || null;
   const navigate = useNavigate();
   const dispatch = useDispatch();

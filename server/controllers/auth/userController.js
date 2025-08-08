@@ -14,20 +14,22 @@ const userController = {
         }
     },
     async refreshAccessToken(req, res) {
-        const incomingRefreshToken = req.cookie?.refreshToken || req.body.refreshToken
+        const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken
         if (!incomingRefreshToken) throw new ApiError(401, "Unathorized request")
         try {
             const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
             const user = await User.findById(decodedToken.id)
-            if (!user) new ApiError(401, "Invalid refresh token")
+            if (!user) throw new ApiError(401, "Invalid refresh token")
 
-            if (incomingRefreshToken !== user?.refreshToken) new ApiError(401, " refresh token is expired or used")
+            if (incomingRefreshToken !== user?.refreshToken) throw new ApiError(401, " refresh token is expired or used")
 
             const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY })
             const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY })
             const options = {
                 httpOnly: true,
-                secure: true
+                secure: true,
+                sameSite: "Strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days   
             }
             return res
                 .status(200)
