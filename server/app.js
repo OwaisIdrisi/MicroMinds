@@ -1,11 +1,14 @@
+import { configDotenv } from "dotenv";
 import express from "express"
 import cors from "cors"
 import routes from "./routes/index.js"
 import cookieParser from "cookie-parser"
 
+configDotenv({
+    path: "./.env"
+})
 
 export const app = express()
-console.log(process.env.CORS_ORIGIN);
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN || "http://localhost:5173",

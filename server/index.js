@@ -1,11 +1,5 @@
-import { configDotenv } from "dotenv";
 import { app } from "./app.js";
 import { connectToDB } from "./db/index.js";
-
-
-configDotenv({
-    path: "./.env"
-})
 
 connectToDB()
     .then(() => {
