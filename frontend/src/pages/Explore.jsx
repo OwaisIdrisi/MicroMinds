@@ -7,10 +7,12 @@ import { setBlogs } from "../features/blogSlice";
 export const Explore = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blog.blogs);
+  console.log(blogs);
   useEffect(() => {
     const getBlogs = async () => {
       try {
         const response = await getAllBlogs();
+        console.log(response);
         dispatch(setBlogs(response?.data));
       } catch (error) {
         console.log(error);

@@ -3,6 +3,7 @@ import { logout } from "../api/auth";
 import { logout as logoutHandler } from "../features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Avatar from "./Avatar";
+import { Explore } from "../pages";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -33,6 +34,18 @@ const Navbar = () => {
             Home
           </NavLink>
         </li>
+        {user && (
+          <li>
+            <NavLink
+              to="/explore"
+              className={({ isActive }) =>
+                `hover:underline ${isActive ? "text-red-500" : "text-white"}`
+              }
+            >
+              Explore
+            </NavLink>
+          </li>
+        )}
         <li>
           <NavLink
             to="/about"

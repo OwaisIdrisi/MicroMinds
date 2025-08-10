@@ -4,7 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCurrentUser } from "./api/auth";
 import { setUser } from "./features/authSlice";
 import { About, Explore, Home, Login, Signup, Blog } from "./pages";
-import { Navbar, ProtectedRoute, RedirectIfAuth } from "./components";
+import {
+  FloatingButton,
+  Navbar,
+  ProtectedRoute,
+  RedirectIfAuth,
+} from "./components";
 
 const App = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -32,6 +37,9 @@ const App = () => {
     <>
       <BrowserRouter>
         <Navbar />
+        <ProtectedRoute>
+          <FloatingButton />
+        </ProtectedRoute>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
