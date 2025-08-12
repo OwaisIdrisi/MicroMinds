@@ -35,16 +35,28 @@ const Navbar = () => {
           </NavLink>
         </li>
         {user && (
-          <li>
-            <NavLink
-              to="/explore"
-              className={({ isActive }) =>
-                `hover:underline ${isActive ? "text-red-500" : "text-white"}`
-              }
-            >
-              Explore
-            </NavLink>
-          </li>
+          <>
+            <li>
+              <NavLink
+                to="/explore"
+                className={({ isActive }) =>
+                  `hover:underline ${isActive ? "text-red-500" : "text-white"}`
+                }
+              >
+                Explore
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/myBlogs"
+                className={({ isActive }) =>
+                  `hover:underline ${isActive ? "text-red-500" : "text-white"}`
+                }
+              >
+                My Blogs
+              </NavLink>
+            </li>
+          </>
         )}
         <li>
           <NavLink

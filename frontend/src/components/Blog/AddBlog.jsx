@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createBlog } from "../../api/blog";
 import { useDispatch, useSelector } from "react-redux";
-import { blogFailure, setBlog, setIsError } from "../../features/blogSlice";
+import { blogFailure, setBlog, setError } from "../../features/blogSlice";
 
 export const AddBlog = ({ setIsModalOpen }) => {
   const dispatch = useDispatch();
@@ -40,7 +40,6 @@ export const AddBlog = ({ setIsModalOpen }) => {
       if (response.sucess === false) {
         // TODO: Inhance the error
         dispatch(blogFailure("Something went wrong while submiting the form"));
-        dispatch(setIsError(true));
         return;
       }
 
@@ -50,7 +49,10 @@ export const AddBlog = ({ setIsModalOpen }) => {
       setFormDetails({ title: "", content: "", tags: "", cover: "" });
       setIsModalOpen(false);
     } catch (error) {
-      dispatch(setIsError(true));
+      // TODO: implement error casees efficently
+      dispatch(
+        setError(error?.message || "something went wrong (add blog :: catch)")
+      );
       console.log(error);
     }
   };

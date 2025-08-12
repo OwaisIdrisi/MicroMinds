@@ -5,7 +5,7 @@ const initialState = {
     loading: false,
     error: null,
     isError: false,
-    myLocalBlog: []
+    myBlogs: [],
 }
 
 const blogSlice = createSlice({
@@ -14,18 +14,37 @@ const blogSlice = createSlice({
     reducers: {
         setBlogs: (state, action) => {
             state.blogs = action.payload
+            state.error = null
+            state.isError = false
+            state.loading = false
         },
         setBlog: (state, action) => {
             state.blogs.push(action.payload)
+            state.error = null
+            state.isError = false
+            state.loading = false
         },
         blogFailure: (state, action) => {
+            state.isError = true
             state.error = action.payload
+            state.loading = false
         },
-        setIsError: (state, action) => {
-            state.isError = action.payload
+        setError: (state, action) => {
+            state.isError = true
+            state.error = action.payload
+            state.loading = false
+        },
+        setMyBlogs: (state, action) => {
+            state.myBlogs = action.payload
+            state.error = null
+            state.isError = false
+            state.loading = false
+        },
+        setLoading: (state, action) => {
+            state.loading = action.payload
         }
     }
 })
 
-export const { setBlogs, blogFailure, setIsError, setBlog } = blogSlice.actions
+export const { setBlogs, blogFailure, setError, setBlog, setMyBlogs, setLoading } = blogSlice.actions
 export default blogSlice.reducer

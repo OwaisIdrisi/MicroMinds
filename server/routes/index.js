@@ -20,7 +20,7 @@ router.get("/me", authenticateUser, userController.me)
 router.post("/blog", authenticateUser,
     upload.single("cover")
     , blogController.addBlog)
-router.get("/blog", blogController.getBlogs)
+router.get("/blog", authenticateUser, blogController.getBlogs)
 router.get("/blog/:id", authenticateUser, blogController.getBlog)
 router.patch("/blog/:id", authenticateUser, blogController.updateBlog)
 router.patch("/blog/cover-image/:id", authenticateUser, upload.single("cover"), blogController.updateCover)

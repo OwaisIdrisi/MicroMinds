@@ -15,6 +15,7 @@ export const getAllBlogs = async () => {
     return response.data
 }
 
+
 export const getBlog = async (id) => {
     const response = await API.get(`/blog/${id}`)
     return await response.data

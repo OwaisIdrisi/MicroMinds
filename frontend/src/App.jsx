@@ -10,6 +10,7 @@ import {
   ProtectedRoute,
   RedirectIfAuth,
 } from "./components";
+import MyBlogs from "./pages/MyBlogs";
 
 const App = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -66,6 +67,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Explore />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/myBlogs"
+            element={
+              <ProtectedRoute>
+                <MyBlogs />
               </ProtectedRoute>
             }
           />

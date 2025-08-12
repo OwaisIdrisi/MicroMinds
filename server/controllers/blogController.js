@@ -35,7 +35,9 @@ const blogController = {
     async getBlogs(req, res) {
         try {
             const blogs = await Blog.find().select("-__v")
-            return res.status(200).json(new ApiResponse(200, blogs, blogs.length ? "Success" : "No blogs found"));
+            const myBlogs = blogs.filter(blog => blog.creatorUsername == req.user.username)
+
+            return res.status(200).json(new ApiResponse(200, { blogs, myBlogs }, blogs.length ? "Success" : "No blogs found"));
         } catch (error) {
             return res.status(500).json(new ApiError(500, error.message || "Internal server error"))
         }
@@ -78,8 +80,8 @@ const blogController = {
         const { id } = req.params
         try {
             let blog = await Blog.findById(id)
-            // console.log("creator id", blog.creator);
-            // console.log("user id", req.user._id);
+            console.log("creator id", blog.creator);
+            console.log("user id", req.user._id);
 
             if (!blog) {
                 return res.status(404).json(new ApiError(404, "Blog not found"))

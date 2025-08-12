@@ -1,40 +1,46 @@
-import React, { useEffect } from "react";
-import { Card } from "../components";
-import { getAllBlogs } from "../api/blog";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Card } from "../components";
+import { useEffect } from "react";
 import {
-  setBlogs,
+  blogFailure,
+  setError,
   setMyBlogs,
   setLoading,
-  setError,
 } from "../features/blogSlice";
+import { getAllBlogs } from "../api/blog";
+// import { getMyBlogs } from "../api/blog";
 
-export const Explore = () => {
-  const dispatch = useDispatch();
-  const blogs = useSelector((state) => state.blog.blogs);
+const MyBlogs = () => {
+  const myBlogs = useSelector((state) => state.blog.myBlogs);
   const error = useSelector((state) => state.blog.error);
   const isError = useSelector((state) => state.blog.isError);
   const loading = useSelector((state) => state.blog.loading);
+  const dispatch = useDispatch();
   useEffect(() => {
-    const getBlogs = async () => {
+    // TODO: make myblogs better by implementing search query
+    const getMyBlogs = async () => {
       try {
         dispatch(setLoading(true));
+
         const response = await getAllBlogs();
         console.log(response);
-        dispatch(setBlogs(response?.data.blogs));
-        if (response.data.myBlogs) {
-          dispatch(setMyBlogs(response?.data.myBlogs));
+        if (!response.success) {
+          console.log("something went wrong");
+
+          dispatch(
+            blogFailure("something went wrong while fetching creator blogs ")
+          );
+          return;
         }
+        dispatch(setMyBlogs(response.data?.myBlogs));
       } catch (error) {
-        console.log(error);
-        dispatch(
-          setError(
-            error?.message || "something went wrong while fetching blogs"
-          )
-        );
+        console.log("error", error);
+        dispatch(setError(true));
+        dispatch(blogFailure(error?.message));
       }
     };
-    getBlogs();
+    getMyBlogs();
   }, [dispatch]);
 
   if (isError && error) {
@@ -53,11 +59,13 @@ export const Explore = () => {
     <section className="text-gray-600 body-font overflow-hidden">
       <div className="container px-5 py-24 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogs.map((blog) => (
-            <Card blog={blog} key={blog._id} />
-          ))}
+          {myBlogs &&
+            myBlogs.length > 0 &&
+            myBlogs.map((blog) => <Card blog={blog} key={blog._id} />)}
         </div>
       </div>
     </section>
   );
 };
+
+export default MyBlogs;
