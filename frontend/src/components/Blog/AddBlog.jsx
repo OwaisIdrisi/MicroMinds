@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { createBlog } from "../../api/blog";
 import { useDispatch, useSelector } from "react-redux";
-import { blogFailure, setBlog, setError } from "../../features/blogSlice";
+import {
+  blogFailure,
+  setBlog,
+  setError,
+  setLoading,
+} from "../../features/blogSlice";
 
 export const AddBlog = ({ setIsModalOpen }) => {
   const dispatch = useDispatch();
   const isError = useSelector((state) => state.blog.isError);
   const error = useSelector((state) => state.blog.error);
+  const loading = useSelector((state) => state.blog.loading);
   const [formDetails, setFormDetails] = useState({
     title: "",
     content: "",
@@ -26,6 +32,7 @@ export const AddBlog = ({ setIsModalOpen }) => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const tags = tag.split(",");
+    dispatch(setLoading(true));
     try {
       setFormDetails({ ...formDetails, tags, cover: coverImage });
       const formData = new FormData();
@@ -33,9 +40,6 @@ export const AddBlog = ({ setIsModalOpen }) => {
       formData.append("content", formDetails.content);
       formData.append("tags", formDetails.tags);
       formData.append("cover", coverImage);
-      console.log("formData", formData);
-      console.log("formDetails", formDetails);
-      console.log(formData.get("title"));
       const response = await createBlog(formData);
       if (response.sucess === false) {
         // TODO: Inhance the error
@@ -178,7 +182,7 @@ export const AddBlog = ({ setIsModalOpen }) => {
             type="submit"
             className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium shadow-lg hover:scale-[1.02] transition-transform"
           >
-            🚀 Publish Blog
+            {loading ? "Loading..." : "🚀 Publish Blog"}
           </button>
         </form>
       </div>

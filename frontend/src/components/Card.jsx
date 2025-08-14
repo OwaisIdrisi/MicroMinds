@@ -1,8 +1,45 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toggleLike } from "../api/blog.js";
+import { useSelector } from "react-redux";
 
 const Card = ({ blog }) => {
-  const { title, content, cover, creatorUsername, _id } = blog;
+  const { title, content, cover, creatorUsername, _id, likes } = blog;
+  const [isLike, setIsLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const user = useSelector((state) => state.auth.user);
+  const [loading, setLoading] = useState(false);
+
+  const likeHandler = async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const response = await toggleLike(_id);
+      setIsLike(!isLike);
+      console.log("liked", response.data._id);
+      setLikeCount(response.data.likes.length);
+    } catch (error) {
+      setIsLike((prev) => !prev);
+      setLikeCount(likes.length);
+      console.log("failed to toggle like ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setLikeCount(likes.length);
+    // // aproach 1
+    // const islikeT = likes.includes(user._id);
+    // if (islikeT) {
+    //   console.log("user is already liked");
+    //   setIsLike(true);
+    // } else {
+    //   setIsLike(false);
+    // }
+    // aproach 2:
+    setIsLike(user?._id ? likes.includes(user._id) : false);
+  }, [likes, user?._id]);
 
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.01]">
@@ -23,13 +60,19 @@ const Card = ({ blog }) => {
           <h3 className="text-xl font-semibold text-gray-800 leading-tight hover:text-blue-600 transition-colors line-clamp-2">
             {title}
           </h3>
-          <button className="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors">
+          <button
+            disabled={loading}
+            onClick={likeHandler}
+            className={`flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors ${
+              loading ? "opacity-50" : "cursor-pointer"
+            }`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
-              fill="none"
+              fill={isLike ? "red" : "none"}
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              stroke={isLike ? "red" : "currentColor"}
             >
               <path
                 strokeLinecap="round"
@@ -38,7 +81,7 @@ const Card = ({ blog }) => {
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
               />
             </svg>
-            <span className="text-sm">{blog.likes.length}</span>
+            <span className="text-sm">{likeCount}</span>
           </button>
         </div>
 

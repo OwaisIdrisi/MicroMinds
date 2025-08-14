@@ -1,48 +1,73 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteBlog, getBlog } from "../api/blog";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { blogFailure, setLoading } from "../features/blogSlice";
 
 const Blog = () => {
   const user = useSelector((state) => state.auth.user);
+  const loading = useSelector((state) => state.blog.loading);
+  const error = useSelector((state) => state.blog.error);
+  const isError = useSelector((state) => state.blog.isError);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isMyBlog, setIsMyBlog] = useState(false);
   const { id } = useParams();
-  const [blog, setBlog] = useState([]);
+  const [blog, setBlog] = useState({});
   useEffect(() => {
     const getSingleBlog = async () => {
+      dispatch(setLoading(true));
       try {
         const response = await getBlog(id);
         console.log(response.data);
-        if (user.username === response.data.creatorUsername) {
+        if (user?.username === response.data.creatorUsername) {
           setIsMyBlog(true);
         } else {
           setIsMyBlog(false);
         }
         setBlog(response.data);
+        dispatch(setLoading(false));
       } catch (error) {
+        dispatch(setLoading(false));
         console.log(error);
       }
     };
     getSingleBlog();
-  }, [id, user]);
+  }, [dispatch, user?.username, id]);
 
   const editHandler = () => {
     console.log("edit is clicked");
   };
   const deleteHandler = async () => {
+    if (!window.confirm("Are you sure you want to delete this blog?")) return;
+    dispatch(setLoading(true));
     try {
       const response = await deleteBlog(blog._id);
       console.log(response);
       if (!response.success) {
-        console.log("something went wrong while deleting the blog");
+        dispatch(blogFailure("something went wrong while deleting the blog"));
         return;
       }
-      navigate(-1);
+      navigate("/explore", { replace: true });
+      dispatch(setLoading(false));
     } catch (error) {
+      dispatch(
+        blogFailure(error?.message || "server error ! please try again")
+      );
       console.log(error);
     }
   };
+
+  if (isError && error) {
+    return (
+      <div className="error text-red-500 text-center text-2xl">{error}</div>
+    );
+  }
+
+  if (loading) {
+    return <div className="text-center text-2xl">Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
       <div className="max-w-4xl mx-auto px-6 py-12">

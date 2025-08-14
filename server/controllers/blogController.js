@@ -80,16 +80,20 @@ const blogController = {
         const { id } = req.params
         try {
             let blog = await Blog.findById(id)
-            console.log("creator id", blog.creator);
-            console.log("user id", req.user._id);
-
             if (!blog) {
                 return res.status(404).json(new ApiError(404, "Blog not found"))
             }
             if (!blog.creator.equals(req.user._id)) {
                 return res.status(401).json(new ApiError(401, [], "Only creator can edit the blog"))
             }
-            await Blog.findByIdAndDelete(id)
+            const deletedBlog = await Blog.findByIdAndDelete(id)
+            console.log(deletedBlog);
+            const publicId = getPublicIdFromUrl(deletedBlog?.cover)
+            const response = await destoyImage(publicId)
+            console.log("response", response);
+
+
+
 
             return res.status(200).json(new ApiResponse(200, null, "blog deleted successfully"))
         } catch (error) {

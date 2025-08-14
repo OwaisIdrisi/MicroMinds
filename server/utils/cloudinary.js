@@ -28,6 +28,8 @@ const uploadOnCloudinary = async (localFilePath) => {
 
 const destoyImage = async (public_id) => {
     // .destroy(public_id, options).then(callback);
+    console.log("destoyImage", public_id);
+
     try {
         const response = await cloudinary.uploader.destroy(public_id, {
             cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

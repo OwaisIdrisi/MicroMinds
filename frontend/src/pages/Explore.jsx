@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Card } from "../components";
 import { getAllBlogs } from "../api/blog";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +20,6 @@ export const Explore = () => {
       try {
         dispatch(setLoading(true));
         const response = await getAllBlogs();
-        console.log(response);
         dispatch(setBlogs(response?.data.blogs));
         if (response.data.myBlogs) {
           dispatch(setMyBlogs(response?.data.myBlogs));

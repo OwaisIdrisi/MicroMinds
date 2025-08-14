@@ -19,7 +19,8 @@ const blogSlice = createSlice({
             state.loading = false
         },
         setBlog: (state, action) => {
-            state.blogs.push(action.payload)
+            // state.blogs.push(action.payload)
+            state.blogs.unshift(action.payload)
             state.error = null
             state.isError = false
             state.loading = false
@@ -42,7 +43,7 @@ const blogSlice = createSlice({
         },
         setLoading: (state, action) => {
             state.loading = action.payload
-        }
+        },
     }
 })
 
