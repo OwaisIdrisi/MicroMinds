@@ -22,7 +22,7 @@ export const getBlog = async (id) => {
 }
 
 export const updateBlog = async (data, id) => {
-    const response = await API.patch(`/blog/${id}`, { data })
+    const response = await API.patch(`/blog/${id}`, data)
     return await response.data
 }
 

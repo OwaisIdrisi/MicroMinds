@@ -56,20 +56,32 @@ const blogController = {
 
     async updateBlog(req, res) {
         const { id } = req.params
-        const { title, content } = req.body
+        const { title, content, tags } = req.body
+        console.log(req.body);
+
         if (title?.trim() === "" || content?.trim() === "") {
             return res.status(401).json(new ApiError(401, "title/content cannot be empty"))
         }
+        const formattedTags = tags ? tags.map(tag => tag.trim().toLowerCase()) : []
+
         try {
-            let blog = await Blog.findById(id)
+            const blog = await Blog.findById(id)
             if (!blog) return res.status(404).json(new ApiError(404, "Blog not found"));
 
             if (!blog.creator.equals(req.user._id)) {
                 return res.status(403).json(new ApiError(403, "Only creator can edit the blog"))
             }
-            blog = await Blog.findByIdAndUpdate(id, {
-                $set: { title, content }
-            }, { new: true }).select("-_id -__v")
+            // const updatedBlog = await Blog.findByIdAndUpdate(id, {
+            //     $set: { title, content, tags: formattedTags }
+            // }, { new: true }).select("-__v")
+            // console.log(blog);
+            blog.title = title;
+            blog.content = content;
+            blog.tags = formattedTags
+            console.log(blog);
+
+            await blog.save()
+
             return res.status(200).json(new ApiResponse(200, blog, "updated successfully"))
         } catch (error) {
             return res.status(500).json(new ApiResponse(500, { error: error.message || "Internal server error" }, "Error while updating blog "))

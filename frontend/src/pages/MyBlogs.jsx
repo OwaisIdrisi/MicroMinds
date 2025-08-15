@@ -24,10 +24,8 @@ const MyBlogs = () => {
         dispatch(setLoading(true));
 
         const response = await getAllBlogs();
-        console.log(response);
         if (!response.success) {
           console.log("something went wrong");
-
           dispatch(
             blogFailure("something went wrong while fetching creator blogs ")
           );
@@ -52,7 +50,13 @@ const MyBlogs = () => {
   }
 
   if (loading) {
-    return <div className="text-center text-2xl">Loading...</div>;
+    return <div className="text-center text-2xl my-6">Loading...</div>;
+  }
+
+  if (myBlogs && myBlogs.length === 0) {
+    return (
+      <div className="text-center text-2xl my-6">You don't Have any Blogs.</div>
+    );
   }
 
   return (

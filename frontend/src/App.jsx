@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getCurrentUser } from "./api/auth";
 import { setUser } from "./features/authSlice";
-import { About, Explore, Home, Login, Signup, Blog } from "./pages";
+import { About, Explore, Home, Login, Blog, Register } from "./pages";
 import {
   FloatingButton,
   Navbar,
@@ -28,7 +28,7 @@ const App = () => {
       }
     };
 
-    if (!user && token && !hasFetchedUser) {
+    if (!user && token && !hasFetchedUser.current) {
       loadUser();
       hasFetchedUser.current = true;
     }
@@ -38,9 +38,7 @@ const App = () => {
     <>
       <BrowserRouter>
         <Navbar />
-        <ProtectedRoute>
-          <FloatingButton />
-        </ProtectedRoute>
+        {user && token && <FloatingButton />}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
@@ -52,10 +50,10 @@ const App = () => {
             }
           />
           <Route
-            path="/signup"
+            path="/register"
             element={
               <RedirectIfAuth>
-                <Signup />
+                <Register />
               </RedirectIfAuth>
             }
           />

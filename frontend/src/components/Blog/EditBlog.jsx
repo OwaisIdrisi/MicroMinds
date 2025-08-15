@@ -1,114 +1,57 @@
 import { useState } from "react";
-import { createBlog } from "../../api/blog";
+import { updateBlog } from "../../api/blog";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  blogFailure,
-  setBlog,
-  setError,
-  setLoading,
-} from "../../features/blogSlice";
+import { blogFailure, setError, setLoading } from "../../features/blogSlice";
 
-// 1. Create a dedicated “Edit Blog” page/component
-
-// Make a new component, e.g., EditBlog.jsx.
-
-// Structure it similarly to AddBlog.jsx but:
-
-// Instead of starting with empty formDetails, pre-fill them with the existing blog data.
-
-// Use getBlog(id) to fetch the blog details and set them in state.
-
-// 2. Routing
-
-// In your App.jsx (or wherever your routes are), add a route like:
-
-// /edit/:id → loads EditBlog component.
-
-// Use useParams() in EditBlog to get the blog ID from the URL.
-
-// 3. Pre-filling form data
-
-// On component mount:
-
-// Fetch the blog using getBlog(id).
-
-// Set the form state (formDetails, coverImage, tags) with the existing values.
-
-// Display the current cover image preview.
-
-// 4. Submitting updates
-
-// When the user submits the edit form:
-
-// Create a FormData object.
-
-// Append updated title, content, tags, and optionally a new cover image.
-
-// Call updateBlog(formData, id) from your API.
-
-// On success, navigate back to the blog detail page.
-
-// 5. Edit button in Blog.jsx
-
-// In your existing Blog.jsx, the editHandler should:
-
-// Navigate to /edit/${blog._id}.
-
-// Make sure this button only shows if the logged-in user owns the blog.
-
-// 6. Edge cases to handle
-
-// User tries to edit a blog they don’t own → show an error or redirect.
-
-// User doesn’t upload a new image → keep the old one.
-
-// Validation for title/content/tags before sending update.
-
-// Show a loading spinner during the update process.
-
-export const AddBlog = ({ setIsModalOpen }) => {
+export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
   const dispatch = useDispatch();
   const isError = useSelector((state) => state.blog.isError);
   const error = useSelector((state) => state.blog.error);
   const loading = useSelector((state) => state.blog.loading);
-  const [formDetails, setFormDetails] = useState({
-    title: "",
-    content: "",
-    cover: "",
-  });
+  //   const [formDetails, setFormDetails] = useState({
+  //     title: "",
+  //     content: "",
+  //     tags: "",
+  //     cover: "",
+  //   });
+  const [formDetails, setFormDetails] = useState(blog);
+  console.log(formDetails);
   const [tag, setTag] = useState("");
-  const [coverImage, setCoverImage] = useState(null);
   const onClose = () => setIsModalOpen(false);
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setCoverImage(file);
-  };
+
   const changeHandler = (e) => {
     setFormDetails({ ...formDetails, [e.target.name]: e.target.value });
   };
   const submitHandler = async (e) => {
     e.preventDefault();
     const tags = tag.split(",");
+    // const tags = ["general", "default"];
     dispatch(setLoading(true));
+    console.log(tags);
     try {
-      setFormDetails({ ...formDetails, cover: coverImage });
-      const formData = new FormData();
-      formData.append("title", formDetails.title);
-      formData.append("content", formDetails.content);
-      formData.append("tags", tags);
-      formData.append("cover", coverImage);
-      const response = await createBlog(formData);
+      setFormDetails({ ...formDetails, tags: tags });
+      const response = await updateBlog(
+        {
+          title: formDetails.title,
+          content: formDetails.content,
+          tags: tags,
+        },
+        blog._id
+      );
+      console.log(response);
       if (response.sucess === false) {
         // TODO: Inhance the error
         dispatch(blogFailure("Something went wrong while submiting the form"));
+
         return;
       }
 
       console.log(response.data);
-      // TODO: implement Loading Functionality
-      dispatch(setBlog(response.data.newBlog));
+      // dispatch(setBlog(response.data.newBlog));
+      setLocalBlog(response.data);
       setFormDetails({ title: "", content: "", tags: "", cover: "" });
       setIsModalOpen(false);
+      dispatch(setLoading(false));
     } catch (error) {
       // TODO: implement error casees efficently
       dispatch(
@@ -139,7 +82,7 @@ export const AddBlog = ({ setIsModalOpen }) => {
         </button>
 
         <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-          ✨ Create New Blog
+          ✨ Edit Blog
         </h2>
 
         {isError && (
@@ -194,27 +137,6 @@ export const AddBlog = ({ setIsModalOpen }) => {
             </label>
           </div>
 
-          {/* Cover Image */}
-          <div className="relative">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Cover Image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full text-gray-700 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none"
-              required
-            />
-            {coverImage && (
-              <img
-                src={URL.createObjectURL(coverImage)}
-                alt="Preview"
-                className="mt-3 w-full h-48 object-cover rounded-lg shadow-md"
-              />
-            )}
-          </div>
-
           {/* Tags */}
           <div className="relative">
             <input
@@ -239,7 +161,7 @@ export const AddBlog = ({ setIsModalOpen }) => {
             type="submit"
             className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium shadow-lg hover:scale-[1.02] transition-transform"
           >
-            {loading ? "Loading..." : "🚀 Publish Blog"}
+            {loading ? "Loading..." : "🚀 Edit Blog"}
           </button>
         </form>
       </div>
