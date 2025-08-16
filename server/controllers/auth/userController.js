@@ -19,17 +19,20 @@ const userController = {
         try {
             const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
             const user = await User.findById(decodedToken.id)
-            if (!user) throw new ApiError(401, "Invalid refresh token")
-
-            if (incomingRefreshToken !== user?.refreshToken) throw new ApiError(401, " refresh token is expired or used")
+            if (!user) {
+                return res.status(401).json(new ApiError(401, "Invalid refresh token"))
+            }
+            if (incomingRefreshToken !== user?.refreshToken) {
+                return res.status(401).json(new ApiError(401, " refresh token is expired or used"))
+            }
 
             const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY })
             const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY })
+            user.refreshToken = refreshToken
+            await user.save()
             const options = {
                 httpOnly: true,
                 secure: true,
-                sameSite: "Strict",
-                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days   
             }
             return res
                 .status(200)
@@ -37,7 +40,7 @@ const userController = {
                 .cookie("refreshToken", refreshToken, options)
                 .json(new ApiResponse(200, { refreshToken, accessToken }, "Access token refreshed"))
         } catch (error) {
-            throw new ApiError(401, error?.message || "Invalid refresh token")
+            res.status(401).json(new ApiError(401, error?.message || "Invalid refresh token"))
         }
     }
 }

@@ -15,7 +15,6 @@ export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
   //     cover: "",
   //   });
   const [formDetails, setFormDetails] = useState(blog);
-  console.log(formDetails);
   const [tag, setTag] = useState("");
   const onClose = () => setIsModalOpen(false);
 

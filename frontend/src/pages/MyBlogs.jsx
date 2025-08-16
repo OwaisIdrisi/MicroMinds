@@ -31,6 +31,7 @@ const MyBlogs = () => {
           );
           return;
         }
+        console.log(response.data);
         dispatch(setMyBlogs(response.data?.myBlogs));
       } catch (error) {
         console.log("error", error);
@@ -53,7 +54,7 @@ const MyBlogs = () => {
     return <div className="text-center text-2xl my-6">Loading...</div>;
   }
 
-  if (myBlogs && myBlogs.length === 0) {
+  if (myBlogs?.length === 0) {
     return (
       <div className="text-center text-2xl my-6">You don't Have any Blogs.</div>
     );

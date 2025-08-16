@@ -6,7 +6,9 @@ const protectedRequest = async (requestFn) => {
     } catch (error) {
         if (error.response?.status === 401) {
             try {
-                await refreshAccessToken();
+                const response = await refreshAccessToken();
+                console.log(response.data);
+                localStorage.setItem("token", response.data.accessToken)
                 return await requestFn()
             } catch (error) {
                 console.log(error);

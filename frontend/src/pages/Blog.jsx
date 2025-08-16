@@ -72,11 +72,11 @@ const Blog = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 my-10">
         <div className="max-w-4xl mx-auto px-6 py-12">
           <button
             onClick={() => window.history.back()}
-            className="mb-6 flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
+            className="mb-6 flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors duration-200 cursor-pointer"
           >
             <svg
               className="w-5 h-5"

@@ -8,64 +8,6 @@ import {
   setLoading,
 } from "../../features/blogSlice";
 
-// 1. Create a dedicated “Edit Blog” page/component
-
-// Make a new component, e.g., EditBlog.jsx.
-
-// Structure it similarly to AddBlog.jsx but:
-
-// Instead of starting with empty formDetails, pre-fill them with the existing blog data.
-
-// Use getBlog(id) to fetch the blog details and set them in state.
-
-// 2. Routing
-
-// In your App.jsx (or wherever your routes are), add a route like:
-
-// /edit/:id → loads EditBlog component.
-
-// Use useParams() in EditBlog to get the blog ID from the URL.
-
-// 3. Pre-filling form data
-
-// On component mount:
-
-// Fetch the blog using getBlog(id).
-
-// Set the form state (formDetails, coverImage, tags) with the existing values.
-
-// Display the current cover image preview.
-
-// 4. Submitting updates
-
-// When the user submits the edit form:
-
-// Create a FormData object.
-
-// Append updated title, content, tags, and optionally a new cover image.
-
-// Call updateBlog(formData, id) from your API.
-
-// On success, navigate back to the blog detail page.
-
-// 5. Edit button in Blog.jsx
-
-// In your existing Blog.jsx, the editHandler should:
-
-// Navigate to /edit/${blog._id}.
-
-// Make sure this button only shows if the logged-in user owns the blog.
-
-// 6. Edge cases to handle
-
-// User tries to edit a blog they don’t own → show an error or redirect.
-
-// User doesn’t upload a new image → keep the old one.
-
-// Validation for title/content/tags before sending update.
-
-// Show a loading spinner during the update process.
-
 export const AddBlog = ({ setIsModalOpen }) => {
   const dispatch = useDispatch();
   const isError = useSelector((state) => state.blog.isError);
