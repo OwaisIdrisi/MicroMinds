@@ -1,15 +1,8 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card } from "../components";
 import { useEffect } from "react";
-import {
-  blogFailure,
-  setError,
-  setMyBlogs,
-  setLoading,
-} from "../features/blogSlice";
+import { setError, setMyBlogs, setLoading } from "../features/blogSlice";
 import { getAllBlogs } from "../api/blog";
-// import { getMyBlogs } from "../api/blog";
 
 const MyBlogs = () => {
   const myBlogs = useSelector((state) => state.blog.myBlogs);
@@ -18,25 +11,23 @@ const MyBlogs = () => {
   const loading = useSelector((state) => state.blog.loading);
   const dispatch = useDispatch();
   useEffect(() => {
-    // TODO: make myblogs better by implementing search query
     const getMyBlogs = async () => {
       try {
         dispatch(setLoading(true));
-
         const response = await getAllBlogs();
-        if (!response.success) {
-          console.log("something went wrong");
-          dispatch(
-            blogFailure("something went wrong while fetching creator blogs ")
-          );
-          return;
-        }
         console.log(response.data);
         dispatch(setMyBlogs(response.data?.myBlogs));
       } catch (error) {
+        if (error.response.data.success === false) {
+          dispatch(error.response.data.message);
+        } else {
+          dispatch(
+            setError(
+              error?.message || "something went wrong while fetching the blogs"
+            )
+          );
+        }
         console.log("error", error);
-        dispatch(setError(true));
-        dispatch(blogFailure(error?.message));
       }
     };
     getMyBlogs();

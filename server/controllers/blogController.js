@@ -96,7 +96,7 @@ const blogController = {
                 return res.status(404).json(new ApiError(404, "Blog not found"))
             }
             if (!blog.creator.equals(req.user._id)) {
-                return res.status(401).json(new ApiError(401, [], "Only creator can edit the blog"))
+                return res.status(401).json(new ApiError(401, "Only creator can edit the blog"))
             }
             const deletedBlog = await Blog.findByIdAndDelete(id)
             console.log(deletedBlog);
@@ -104,12 +104,10 @@ const blogController = {
             const response = await destoyImage(publicId)
             console.log("response", response);
 
-
-
-
             return res.status(200).json(new ApiResponse(200, null, "blog deleted successfully"))
         } catch (error) {
-            return res.status(500).json(new ApiResponse(500, { error: error?.message }, "Internal server error"))
+            return res.status(500)
+                .json(new ApiError(500, error?.message || "Internal server error"))
         }
     },
 
@@ -117,12 +115,12 @@ const blogController = {
         const { id } = req.params
         const coverLocalPath = req.file?.path
         if (!coverLocalPath) {
-            return res.status(400).json(new ApiError(400, [], "CoverImage File is required"))
+            return res.status(400).json(new ApiError(400, "CoverImage File is required"))
         }
         try {
             const blog = await Blog.findById(id)
             if (!blog) {
-                return res.status(404).json(new ApiError(404, [], "blog not found"))
+                return res.status(404).json(new ApiError(404, "blog not found"))
             }
             //  delete the existing coverImage
             const publicId = getPublicIdFromUrl(blog.cover)
@@ -137,7 +135,7 @@ const blogController = {
 
             return res.status(200).json(new ApiResponse(200, updatedBlog, "updated cover Image successfully"))
         } catch (error) {
-            return res.status(500).json(new ApiResponse(500, { error: error.message || "Internal server error" }, "Error while updating cover Image "))
+            return res.status(500).json(new ApiError(500, error.message || "Internal server error"))
         }
     },
     async likeBlog(req, res) {

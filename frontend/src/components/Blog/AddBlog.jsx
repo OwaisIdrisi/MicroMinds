@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { createBlog } from "../../api/blog";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  blogFailure,
-  setBlog,
-  setError,
-  setLoading,
-} from "../../features/blogSlice";
+import { setBlog, setError, setLoading } from "../../features/blogSlice";
 
 export const AddBlog = ({ setIsModalOpen }) => {
   const dispatch = useDispatch();
@@ -40,22 +35,20 @@ export const AddBlog = ({ setIsModalOpen }) => {
       formData.append("tags", tags);
       formData.append("cover", coverImage);
       const response = await createBlog(formData);
-      if (response.sucess === false) {
-        // TODO: Inhance the error
-        dispatch(blogFailure("Something went wrong while submiting the form"));
-        return;
-      }
-
       console.log(response.data);
-      // TODO: implement Loading Functionality
       dispatch(setBlog(response.data.newBlog));
       setFormDetails({ title: "", content: "", tags: "", cover: "" });
       setIsModalOpen(false);
     } catch (error) {
-      // TODO: implement error casees efficently
-      dispatch(
-        setError(error?.message || "something went wrong (add blog :: catch)")
-      );
+      if (error.response?.data.success === false) {
+        dispatch(setError(error.response.data.message));
+      } else {
+        dispatch(
+          setError(
+            error?.message || "something went wrong while submitting the form"
+          )
+        );
+      }
       console.log(error);
     }
   };

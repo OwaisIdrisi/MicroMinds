@@ -8,7 +8,6 @@ export const API = axios.create({
 
 
 export const login = async (data) => {
-    console.log(import.meta.env.VITE_BASE_URL);
     const response = await API.post(`/login`, data)
     return response.data
 }
@@ -18,10 +17,10 @@ export const register = async (data) => {
     return response.data
 }
 
-export const logout = (async () => {
+export const logout = () => protectedRequest((async () => {
     const response = await API.post(`/logout`)
     return response.data
-})
+}))
 
 export const getCurrentUser = () =>
     protectedRequest(async () => {

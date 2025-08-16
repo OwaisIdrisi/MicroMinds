@@ -26,11 +26,15 @@ export const Explore = () => {
         }
       } catch (error) {
         console.log(error);
-        dispatch(
-          setError(
-            error?.message || "something went wrong while fetching blogs"
-          )
-        );
+        if (error.response?.data.success === false) {
+          dispatch(setError(error.response.data.message));
+        } else {
+          dispatch(
+            setError(
+              error?.message || "something went wrong while fetching blogs"
+            )
+          );
+        }
       }
     };
     getBlogs();
@@ -38,9 +42,7 @@ export const Explore = () => {
 
   if (isError && error) {
     return (
-      <div className="error text-red-500 text-center text-2xl">
-        this is an error
-      </div>
+      <div className="error text-red-500 text-center text-2xl">{error}</div>
     );
   }
 

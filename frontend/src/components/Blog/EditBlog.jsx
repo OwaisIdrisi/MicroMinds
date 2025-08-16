@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { updateBlog } from "../../api/blog";
 import { useDispatch, useSelector } from "react-redux";
-import { blogFailure, setError, setLoading } from "../../features/blogSlice";
+import { setError, setLoading } from "../../features/blogSlice";
 
 export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
   const dispatch = useDispatch();
@@ -24,9 +24,7 @@ export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const tags = tag.split(",");
-    // const tags = ["general", "default"];
     dispatch(setLoading(true));
-    console.log(tags);
     try {
       setFormDetails({ ...formDetails, tags: tags });
       const response = await updateBlog(
@@ -38,24 +36,17 @@ export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
         blog._id
       );
       console.log(response);
-      if (response.sucess === false) {
-        // TODO: Inhance the error
-        dispatch(blogFailure("Something went wrong while submiting the form"));
-
-        return;
-      }
-
-      console.log(response.data);
       // dispatch(setBlog(response.data.newBlog));
       setLocalBlog(response.data);
       setFormDetails({ title: "", content: "", tags: "", cover: "" });
       setIsModalOpen(false);
       dispatch(setLoading(false));
     } catch (error) {
-      // TODO: implement error casees efficently
-      dispatch(
-        setError(error?.message || "something went wrong (add blog :: catch)")
-      );
+      if (error.response?.data.success === false) {
+        dispatch(setError("Something went wrong while submiting the form"));
+      } else {
+        dispatch(setError(error?.message || "something went wrong"));
+      }
       console.log(error);
     }
   };

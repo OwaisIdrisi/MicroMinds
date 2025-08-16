@@ -50,7 +50,11 @@ const Register = () => {
       setFormDetails({ fullName: "", username: "", email: "", password: "" });
       navigate("/");
     } catch (error) {
-      dispatch(loginFailure(error.message || "Register Failed"));
+      if (error.response?.data.success === false) {
+        dispatch(loginFailure(error.response.data.message));
+      } else {
+        dispatch(loginFailure(error.message || "Register Failed"));
+      }
       console.log(error);
     }
   };
@@ -84,10 +88,10 @@ const Register = () => {
               )}
             </div>
             <input
-              required
               type="file"
               className="hidden"
               accept="image/*"
+              required
               onChange={handleAvatarChange}
             />
           </label>

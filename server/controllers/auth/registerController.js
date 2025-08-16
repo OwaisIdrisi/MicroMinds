@@ -23,19 +23,19 @@ const registerController = {
         if (
             [fullName, username, email, password].some(field => field.trim() === "")
         ) {
-            throw new ApiError(400, "All fields are required")
+            return res.status(400).json(new ApiError(400, "All fields are required"))
         }
 
         const existedUser = await User.findOne({
             $or: [{ username }, { email }]
         })
         if (existedUser) {
-            throw new ApiError(409, "User with this email or username is already exists")
+            return res.status(400).json(new ApiError(409, "User with this email or username is already exists"))
         }
 
         const avatarLocalPath = req.file?.path
         if (!avatarLocalPath) {
-            throw new ApiError(400, "Avatar File is required")
+            return res.status(400).json(new ApiError(400, "Avatar File is required"))
         }
         const avatar = await uploadOnCloudinary(avatarLocalPath)
 
@@ -51,9 +51,7 @@ const registerController = {
 
             await User.findByIdAndUpdate(newUser._id, { refreshToken });
 
-
             const createdUser = await User.findById(newUser._id).select("-password -refreshToken")
-
 
             const options = {
                 httpOnly: true,
@@ -68,7 +66,7 @@ const registerController = {
                 )
         } catch (error) {
             console.log(error)
-            throw new ApiError(500, "Something went wrong while registering user")
+            return res.status(500).json(new ApiError(500, "Something went wrong while registering user"))
         }
     }
 }

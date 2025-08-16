@@ -19,11 +19,6 @@ export default function Login() {
     dispatch(loginStart());
     try {
       const data = await login(formData);
-      if (data.success === false) {
-        // todo: manage error in backend and frontend
-        dispatch(loginFailure("login error"));
-        return;
-      }
       dispatch(
         loginSuccess({
           user: data.data.userResponse,
@@ -34,7 +29,12 @@ export default function Login() {
       setFormData({ email: "", password: "" });
       navigate("/");
     } catch (error) {
-      dispatch(loginFailure(error.message || "Login Failed "));
+      if (error.response?.data?.success === false) {
+        dispatch(loginFailure(error.response.data.message));
+        return;
+      } else {
+        dispatch(loginFailure(error.message || "Login Failed "));
+      }
     }
   };
   const changeHandler = (e) => {
@@ -61,6 +61,7 @@ export default function Login() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
               onChange={(e) => changeHandler(e)}
               value={formData.email}
+              required
             />
           </div>
           <div>
@@ -75,6 +76,7 @@ export default function Login() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
               onChange={(e) => changeHandler(e)}
               value={formData.password}
+              required
             />
           </div>
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}

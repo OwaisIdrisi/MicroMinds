@@ -18,10 +18,10 @@ const loginController = {
         console.log(req.body);
 
         if (!username && !email) {
-            return res.status(400).json(new ApiError(400, [], "username/email is required"))
+            return res.status(400).json(new ApiError(400, "username/email is required"))
         }
         if (!password) {
-            return res.status(400).json(new ApiError(400, [], "Password is required"))
+            return res.status(400).json(new ApiError(400, "Password is required"))
         }
 
         // find user
@@ -29,10 +29,14 @@ const loginController = {
             const user = await User.findOne({
                 $or: [{ email }, { username }]
             })
-            if (!user) throw new ApiError(404, "User does not exist")
+            if (!user) {
+                return res.status(404).json(new ApiError(404, "User does not exist"))
+            }
 
             const isPasswordValid = await bcrypt.compare(password, user.password)
-            if (!isPasswordValid) throw new ApiError(401, "Invalid user credentials")
+            if (!isPasswordValid) {
+                return res.status(401).json(new ApiError(401, "Invalid user credentials"))
+            }
 
             const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY })
             const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY })
@@ -47,7 +51,6 @@ const loginController = {
                 sameSite: 'Strict',
             }
 
-
             return res
                 .status(200)
                 .cookie("accessToken", accessToken, options)
@@ -55,7 +58,8 @@ const loginController = {
                 .json(new ApiResponse(200, { userResponse, refreshToken, accessToken }))
 
         } catch (error) {
-            throw new ApiError(500, "Internal server error")
+            console.error("Login error", error)
+            return res.status(500).json(new ApiError(500, "Internal server error"))
         }
     },
 

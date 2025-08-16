@@ -19,6 +19,9 @@ const Card = ({ blog }) => {
       console.log("liked", response.data._id);
       setLikeCount(response.data.likes.length);
     } catch (error) {
+      if (error.response?.data.success === false) {
+        alert(error.response.data.message);
+      }
       setIsLike((prev) => !prev);
       setLikeCount(likes.length);
       console.log("failed to toggle like ", error);

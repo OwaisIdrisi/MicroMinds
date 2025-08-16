@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteBlog, getBlog } from "../api/blog";
 import { useDispatch, useSelector } from "react-redux";
-import { blogFailure, setLoading } from "../features/blogSlice";
+import { setError, setLoading } from "../features/blogSlice";
 import { Editblog } from "../components/Blog/EditBlog";
 
 const Blog = () => {
@@ -22,15 +22,20 @@ const Blog = () => {
       dispatch(setLoading(true));
       try {
         const response = await getBlog(id);
-        if (user?.username === response.data.creatorUsername) {
-          setIsMyBlog(true);
-        } else {
-          setIsMyBlog(false);
-        }
+        user?.username === response.data.creatorUsername
+          ? setIsMyBlog(true)
+          : setIsMyBlog(false);
         setBlog(response.data);
         dispatch(setLoading(false));
       } catch (error) {
-        dispatch(setLoading(false));
+        if (error.response?.data.success === false) {
+          dispatch(setError(error.response.data.message));
+        } else {
+          dispatch(
+            setError(error?.message) ||
+              "something went wrong while fetching the blog details"
+          );
+        }
         console.log(error);
       }
     };
@@ -46,16 +51,15 @@ const Blog = () => {
     dispatch(setLoading(true));
     try {
       const response = await deleteBlog(blog._id);
-      if (!response.success) {
-        dispatch(blogFailure("something went wrong while deleting the blog"));
-        return;
-      }
+      console.log(response);
       navigate("/explore", { replace: true });
       dispatch(setLoading(false));
     } catch (error) {
-      dispatch(
-        blogFailure(error?.message || "server error ! please try again")
-      );
+      if (error.response?.data.success === false) {
+        dispatch(setError(error.response.data.message));
+      } else {
+        dispatch(setError(error?.message || "server error ! please try again"));
+      }
       console.log(error);
     }
   };
