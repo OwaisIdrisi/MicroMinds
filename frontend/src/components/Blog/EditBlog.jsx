@@ -10,7 +10,7 @@ export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
   const error = useSelector((state) => state.blog.error);
   const loading = useSelector((state) => state.blog.loading);
   const [formDetails, setFormDetails] = useState(blog);
-  const [tag, setTag] = useState(blog.tags);
+  const [tag, setTag] = useState(blog.tags.join(","));
   const onClose = () => setIsModalOpen(false);
 
   const changeHandler = (e) => {
@@ -18,7 +18,11 @@ export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
   };
   const submitHandler = async (e) => {
     e.preventDefault();
-    const tags = tag.split(",");
+    const tags = tag
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+    console.log(tags);
     dispatch(setLoading(true));
     try {
       setFormDetails({ ...formDetails, tags: tags });

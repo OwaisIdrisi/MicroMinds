@@ -88,10 +88,10 @@ export const Home = () => {
           <a href="/about" className="hover:underline">
             About
           </a>
-          <a href="/contact" className="hover:underline">
+          <a href="#" className="hover:underline">
             Contact
           </a>
-          <a href="/privacy" className="hover:underline">
+          <a href="#" className="hover:underline">
             Privacy Policy
           </a>
         </div>

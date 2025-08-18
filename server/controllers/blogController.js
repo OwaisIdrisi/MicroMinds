@@ -64,6 +64,7 @@ const blogController = {
             return res.status(401).json(new ApiError(401, "title/content cannot be empty"))
         }
         const formattedTags = tags ? tags.map(tag => tag.trim().toLowerCase()) : []
+        console.log(formattedTags);
 
         try {
             const blog = await Blog.findById(id)
