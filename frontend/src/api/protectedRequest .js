@@ -13,7 +13,7 @@ const protectedRequest = async (requestFn) => {
             } catch (error) {
                 localStorage.removeItem("token")
                 localStorage.removeItem("user")
-                window.location.reload()
+                // window.location.reload() 
                 console.log(error);
             }
         }
