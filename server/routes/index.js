@@ -16,7 +16,9 @@ router.post("/login", loginController.login)
 router.post("/logout", authenticateUser, loginController.logout)
 router.post("/refresh-token", userController.refreshAccessToken)
 router.get("/me", authenticateUser, userController.me)
+router.get("/profile/:username", authenticateUser, userController.myProfile)
 
+// blog routes
 router.post("/blog", authenticateUser,
     upload.single("cover")
     , blogController.addBlog)

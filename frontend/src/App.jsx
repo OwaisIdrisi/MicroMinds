@@ -11,6 +11,8 @@ import {
   RedirectIfAuth,
 } from "./components";
 import MyBlogs from "./pages/MyBlogs";
+import { Toaster } from "react-hot-toast";
+import Profile from "./pages/Profile";
 
 const App = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -39,6 +41,29 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         {user && token && <FloatingButton />}
+        <Toaster
+          position="top-right"
+          reverseOrder={false}
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: "#333",
+              color: "#fff",
+            },
+            success: {
+              style: {
+                background: "green",
+                color: "white",
+              },
+            },
+            error: {
+              style: {
+                background: "red",
+                color: "white",
+              },
+            },
+          }}
+        />
         <Routes>
           <Route
             path="/"
@@ -67,6 +92,14 @@ const App = () => {
           <Route path="/about" element={<About />} />
 
           {/* Protected Routes */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/explore"
             element={

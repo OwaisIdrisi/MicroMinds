@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../api/auth";
-import { loginFailure, loginStart, loginSuccess } from "../features/authSlice";
+import {
+  loginFailure,
+  loginStart,
+  loginSuccess,
+  resetError,
+} from "../features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -15,6 +21,11 @@ const Register = () => {
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    dispatch(resetError());
+  }, [dispatch, error]);
+
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -37,10 +48,6 @@ const Register = () => {
     try {
       const response = await register(formData);
       console.log(response);
-      if (!response.success) {
-        dispatch(loginFailure("Register Error"));
-        return;
-      }
       dispatch(
         loginSuccess({
           user: response.userResponse,
@@ -48,13 +55,13 @@ const Register = () => {
         })
       );
       setFormDetails({ fullName: "", username: "", email: "", password: "" });
+      toast.success("✅ Register successful!");
       navigate("/");
     } catch (error) {
-      if (error.response?.data.success === false) {
-        dispatch(loginFailure(error.response.data.message));
-      } else {
-        dispatch(loginFailure(error.message || "Register Failed"));
-      }
+      const message =
+        error.response?.data?.message || error.message || "❌ Login failed";
+      dispatch(loginFailure(message));
+      toast.error(message);
       console.log(error);
     }
   };

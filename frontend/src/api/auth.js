@@ -32,3 +32,10 @@ export const refreshAccessToken = async () => {
     const response = await API.post('/refresh-token')
     return response.data
 }
+
+export const getUserProfile = (username) => protectedRequest(async () => {
+    const response = await API.get(`/profile/${username}`)
+    console.log(response);
+
+    return response.data
+})

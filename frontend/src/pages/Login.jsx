@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
-import { loginStart, loginFailure, loginSuccess } from "../features/authSlice";
+import {
+  loginStart,
+  loginFailure,
+  loginSuccess,
+  resetError,
+} from "../features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 export default function Login() {
   // const { user, token } = useSelector((state) => state.auth);
-  const { error, loading } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { error, loading } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(resetError());
+  }, [dispatch, error]);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,14 +37,13 @@ export default function Login() {
       );
       console.log(data);
       setFormData({ email: "", password: "" });
+      toast.success("✅ Login successful!");
       navigate("/");
     } catch (error) {
-      if (error.response?.data?.success === false) {
-        dispatch(loginFailure(error.response.data.message));
-        return;
-      } else {
-        dispatch(loginFailure(error.message || "Login Failed "));
-      }
+      const message =
+        error.response?.data?.message || error.message || "❌ Login failed";
+      dispatch(loginFailure(message));
+      toast.error(message);
     }
   };
   const changeHandler = (e) => {
@@ -42,7 +51,7 @@ export default function Login() {
   };
 
   return (
-    <div className="py-22 flex items-center justify-center bg-gray-50 px-4">
+    <div className="py-22 flex items-center justify-center bg-gray-50 px-4 h-screen">
       <div className="max-w-md w-full bg-white p-8 shadow-lg rounded-xl">
         <h2 className="text-2xl font-bold text-gray-800 text-center">
           Login to MicroMinds

@@ -4,6 +4,7 @@ import { logout as logoutHandler } from "../features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Avatar from "./Avatar";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 function Navbar() {
   const { user } = useSelector((state) => state.auth);
@@ -17,6 +18,7 @@ function Navbar() {
       const data = await logout(token);
       if (data.success === false) return;
       dispatch(logoutHandler());
+      toast.success("Logout successfuly");
       navigate("/login");
     } catch (error) {
       console.error(error);
@@ -90,7 +92,9 @@ function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
-              <Avatar user={user} />
+              <Link to="/profile">
+                <Avatar user={user} />
+              </Link>
               <button
                 onClick={logoutUser}
                 className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
@@ -107,10 +111,10 @@ function Navbar() {
                 Login
               </Link>
               <Link
-                to="/signup"
+                to="/register"
                 className="px-4 py-2 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
               >
-                Sign Up
+                Register
               </Link>
             </div>
           )}
@@ -220,15 +224,19 @@ function Navbar() {
             </NavLink>
 
             {user ? (
-              <button
-                onClick={() => {
-                  logoutUser();
-                  setIsMenuOpen(false);
-                }}
-                className="block w-full text-center px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
-              >
-                Logout
-              </button>
+              <>
+                <Avatar user={user} />
+
+                <button
+                  onClick={() => {
+                    logoutUser();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-center px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <>
                 <Link
@@ -239,11 +247,11 @@ function Navbar() {
                   Login
                 </Link>
                 <Link
-                  to="/signup"
+                  to="/register"
                   onClick={() => setIsMenuOpen(false)}
                   className="block w-full text-center px-4 py-2 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
                 >
-                  Sign Up
+                  Register
                 </Link>
               </>
             )}

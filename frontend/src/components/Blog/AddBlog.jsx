@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createBlog } from "../../api/blog";
 import { useDispatch, useSelector } from "react-redux";
 import { setBlog, setError, setLoading } from "../../features/blogSlice";
+import toast from "react-hot-toast";
 
 export const AddBlog = ({ setIsModalOpen }) => {
   const dispatch = useDispatch();
@@ -39,16 +40,15 @@ export const AddBlog = ({ setIsModalOpen }) => {
       dispatch(setBlog(response.data.newBlog));
       setFormDetails({ title: "", content: "", tags: "", cover: "" });
       setIsModalOpen(false);
+      toast.success("Blog created successfully");
     } catch (error) {
-      if (error.response?.data.success === false) {
-        dispatch(setError(error.response.data.message));
-      } else {
-        dispatch(
-          setError(
-            error?.message || "something went wrong while submitting the form"
-          )
-        );
-      }
+      const message =
+        error.response?.data?.message ||
+        error?.message ||
+        "something went wrong while submitting the form";
+      dispatch(setError(message));
+      toast.error(message);
+
       console.log(error);
     }
   };
