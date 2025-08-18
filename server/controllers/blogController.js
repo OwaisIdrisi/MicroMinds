@@ -10,7 +10,9 @@ const blogController = {
         if (title?.trim() === "" || content?.trim() === "") {
             return res.status(400).json(new ApiError(400, "Title and content cannot be empty"));
         }
-        const formattedTags = tags ? tags.map(tag => tag.trim().toLowerCase()) : []
+        console.log("tags=", tags);
+        const tagToArr = tags.split(",")
+        const formattedTags = tagToArr ? tagToArr.map(tag => tag.trim().toLowerCase()) : []
 
         let coverLocalPath = req.file?.path
         if (!coverLocalPath) {
@@ -57,7 +59,6 @@ const blogController = {
     async updateBlog(req, res) {
         const { id } = req.params
         const { title, content, tags } = req.body
-        console.log(req.body);
 
         if (title?.trim() === "" || content?.trim() === "") {
             return res.status(401).json(new ApiError(401, "title/content cannot be empty"))
@@ -78,7 +79,7 @@ const blogController = {
             blog.title = title;
             blog.content = content;
             blog.tags = formattedTags
-            console.log(blog);
+            // console.log(blog);
 
             await blog.save()
 

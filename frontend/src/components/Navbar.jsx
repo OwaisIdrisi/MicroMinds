@@ -18,7 +18,7 @@ function Navbar() {
       const data = await logout(token);
       if (data.success === false) return;
       dispatch(logoutHandler());
-      toast.success("Logout successfuly");
+      toast.success("Logout successfully");
       navigate("/login");
     } catch (error) {
       console.error(error);
@@ -28,13 +28,13 @@ function Navbar() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <nav className="bg-white shadow-lg fixed left-0 top-0 w-full z-40 px-3 md:px-6">
+    <nav className="bg-white shadow-lg fixed left-0 top-0 w-full z-40 px-4 md:px-8">
       <div className="flex items-center justify-between h-16 relative">
         {/* Logo - Left */}
         <div className="flex items-center">
           <Link
             to="/"
-            className="text-3xl font-extrabold text-gray-900 tracking-wide"
+            className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-wide"
           >
             <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-transparent bg-clip-text">
               MicroMinds
@@ -42,7 +42,7 @@ function Navbar() {
           </Link>
         </div>
 
-        {/* Nav Links - Center */}
+        {/* Nav Links - Center (hidden on mobile) */}
         <div className="hidden md:flex space-x-8 absolute left-1/2 -translate-x-1/2">
           <NavLink
             to="/"
@@ -75,6 +75,16 @@ function Navbar() {
               >
                 My Blogs
               </NavLink>
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  `hover:underline ${
+                    isActive ? "text-red-500" : "text-gray-700"
+                  }`
+                }
+              >
+                Profile
+              </NavLink>
             </>
           )}
 
@@ -88,7 +98,7 @@ function Navbar() {
           </NavLink>
         </div>
 
-        {/* Auth Buttons - Right */}
+        {/* Auth Buttons - Right (hidden on mobile) */}
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
@@ -120,7 +130,7 @@ function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Button (still far right on small screens) */}
+        {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center">
           <button
             onClick={toggleMenu}
@@ -135,7 +145,6 @@ function Navbar() {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"
@@ -151,7 +160,6 @@ function Navbar() {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"
@@ -166,98 +174,114 @@ function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div
-          id="mobile-menu"
-          className="md:hidden bg-white shadow-md transition-all duration-300 ease-in-out"
-        >
-          <div className="px-4 pt-2 pb-4 space-y-2">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `block px-4 py-2 rounded-md ${
-                  isActive ? "text-red-500" : "text-gray-700"
-                } hover:bg-gray-100 transition`
-              }
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </NavLink>
+      <div
+        id="mobile-menu"
+        className={`md:hidden bg-white shadow-md transition-all duration-300 ease-in-out overflow-hidden ${
+          isMenuOpen ? "max-h-screen" : "max-h-0"
+        }`}
+      >
+        <div className="px-4 pt-2 pb-4 space-y-2">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `block px-4 py-2 rounded-md ${
+                isActive ? "text-red-500" : "text-gray-700"
+              } hover:bg-gray-100 transition`
+            }
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Home
+          </NavLink>
 
-            {user && (
-              <>
-                <NavLink
-                  to="/explore"
-                  className={({ isActive }) =>
-                    `block px-4 py-2 rounded-md ${
-                      isActive ? "text-red-500" : "text-gray-700"
-                    } hover:bg-gray-100 transition`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Explore
-                </NavLink>
-                <NavLink
-                  to="/myBlogs"
-                  className={({ isActive }) =>
-                    `block px-4 py-2 rounded-md ${
-                      isActive ? "text-red-500" : "text-gray-700"
-                    } hover:bg-gray-100 transition`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  My Blogs
-                </NavLink>
-              </>
-            )}
+          {user && (
+            <>
+              <NavLink
+                to="/explore"
+                className={({ isActive }) =>
+                  `block px-4 py-2 rounded-md ${
+                    isActive ? "text-red-500" : "text-gray-700"
+                  } hover:bg-gray-100 transition`
+                }
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Explore
+              </NavLink>
+              <NavLink
+                to="/myBlogs"
+                className={({ isActive }) =>
+                  `block px-4 py-2 rounded-md ${
+                    isActive ? "text-red-500" : "text-gray-700"
+                  } hover:bg-gray-100 transition`
+                }
+                onClick={() => setIsMenuOpen(false)}
+              >
+                My Blogs
+              </NavLink>
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  `block px-4 py-2 rounded-md ${
+                    isActive ? "text-red-500" : "text-gray-700"
+                  } hover:bg-gray-100 transition`
+                }
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Profile
+              </NavLink>
+            </>
+          )}
 
-            <NavLink
-              to="/about"
-              className={({ isActive }) =>
-                `block px-4 py-2 rounded-md ${
-                  isActive ? "text-red-500" : "text-gray-700"
-                } hover:bg-gray-100 transition`
-              }
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About
-            </NavLink>
+          <NavLink
+            to="/about"
+            className={({ isActive }) =>
+              `block px-4 py-2 rounded-md ${
+                isActive ? "text-red-500" : "text-gray-700"
+              } hover:bg-gray-100 transition`
+            }
+            onClick={() => setIsMenuOpen(false)}
+          >
+            About
+          </NavLink>
 
-            {user ? (
-              <>
+          {user ? (
+            <>
+              <div className="flex items-center gap-2 px-4">
                 <Avatar user={user} />
+                <span className="text-gray-700 font-medium">
+                  {user.fullName}
+                </span>
+              </div>
 
-                <button
-                  onClick={() => {
-                    logoutUser();
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full text-center px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-center px-4 py-2 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
-                >
-                  Register
-                </Link>
-              </>
-            )}
-          </div>
+              <button
+                onClick={() => {
+                  logoutUser();
+                  setIsMenuOpen(false);
+                }}
+                className="block w-full text-center px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full text-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full text-center px-4 py-2 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
-      )}
+      </div>
     </nav>
   );
 }

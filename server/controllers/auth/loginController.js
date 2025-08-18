@@ -65,6 +65,11 @@ const loginController = {
     },
 
     async logout(req, res) {
+        const options = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
+        }
         try {
             await User.findByIdAndUpdate(req.user._id, {
                 $set: {

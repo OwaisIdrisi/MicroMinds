@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toggleLike } from "../api/blog.js";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const Card = ({ blog }) => {
   const { title, content, cover, creatorUsername, _id, likes } = blog;
@@ -14,14 +15,16 @@ const Card = ({ blog }) => {
     if (loading) return;
     setLoading(true);
     try {
+      console.log(isLike);
       const response = await toggleLike(_id);
-      setIsLike(!isLike);
+      const newLike = !isLike;
+      setIsLike(newLike);
       console.log("liked", response.data._id);
       setLikeCount(response.data.likes.length);
+      toast.success(newLike ? "liked" : "unliked");
     } catch (error) {
-      if (error.response?.data.success === false) {
-        alert(error.response.data.message);
-      }
+      const message = error.response?.data?.message || "failed to toggle like";
+      toast.error(message);
       setIsLike((prev) => !prev);
       setLikeCount(likes.length);
       console.log("failed to toggle like ", error);
@@ -32,15 +35,6 @@ const Card = ({ blog }) => {
 
   useEffect(() => {
     setLikeCount(likes.length);
-    // // aproach 1
-    // const islikeT = likes.includes(user._id);
-    // if (islikeT) {
-    //   console.log("user is already liked");
-    //   setIsLike(true);
-    // } else {
-    //   setIsLike(false);
-    // }
-    // aproach 2:
     setIsLike(user?._id ? likes.includes(user._id) : false);
   }, [likes, user?._id]);
 

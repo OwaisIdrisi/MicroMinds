@@ -35,19 +35,27 @@ const MyBlogs = () => {
 
   if (isError && error) {
     return (
-      <div className="error text-red-500 text-center text-2xl">
-        this is an error
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="text-red-500 text-2xl text-center">{error}</div>
       </div>
     );
   }
 
   if (loading) {
-    return <div className="text-center text-2xl my-6">Loading...</div>;
-  }
-
-  if (myBlogs?.length === 0) {
     return (
-      <div className="text-center text-2xl my-6">You don't Have any Blogs.</div>
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="text-center text-2xl">Loading...</div>
+      </div>
+    );
+  }
+  if (!loading && !isError && myBlogs.length === 0) {
+    console.log("no blogs");
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="text-red-500 text-2xl text-center">
+          There are No blogs
+        </div>
+      </div>
     );
   }
 

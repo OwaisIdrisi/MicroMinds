@@ -28,14 +28,11 @@ const Blog = () => {
         setBlog(response.data);
         dispatch(setLoading(false));
       } catch (error) {
-        if (error.response?.data.success === false) {
-          dispatch(setError(error.response.data.message));
-        } else {
-          dispatch(
-            setError(error?.message) ||
-              "something went wrong while fetching the blog details"
-          );
-        }
+        const message =
+          error.response?.data?.message ||
+          error?.message ||
+          "something went wrong while fetching the blog details";
+        dispatch(setError(message));
         console.log(error);
       }
     };
@@ -55,11 +52,11 @@ const Blog = () => {
       navigate("/explore", { replace: true });
       dispatch(setLoading(false));
     } catch (error) {
-      if (error.response?.data.success === false) {
-        dispatch(setError(error.response.data.message));
-      } else {
-        dispatch(setError(error?.message || "server error ! please try again"));
-      }
+      const message =
+        error.response?.data?.message ||
+        error?.message ||
+        "server error! please try again";
+      dispatch(setError(message));
       console.log(error);
     }
   };

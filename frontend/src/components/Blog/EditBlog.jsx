@@ -2,20 +2,15 @@ import { useState } from "react";
 import { updateBlog } from "../../api/blog";
 import { useDispatch, useSelector } from "react-redux";
 import { setError, setLoading } from "../../features/blogSlice";
+import toast from "react-hot-toast";
 
 export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
   const dispatch = useDispatch();
   const isError = useSelector((state) => state.blog.isError);
   const error = useSelector((state) => state.blog.error);
   const loading = useSelector((state) => state.blog.loading);
-  //   const [formDetails, setFormDetails] = useState({
-  //     title: "",
-  //     content: "",
-  //     tags: "",
-  //     cover: "",
-  //   });
   const [formDetails, setFormDetails] = useState(blog);
-  const [tag, setTag] = useState("");
+  const [tag, setTag] = useState(blog.tags);
   const onClose = () => setIsModalOpen(false);
 
   const changeHandler = (e) => {
@@ -36,17 +31,18 @@ export const Editblog = ({ blog, setIsModalOpen, setLocalBlog }) => {
         blog._id
       );
       console.log(response);
-      // dispatch(setBlog(response.data.newBlog));
       setLocalBlog(response.data);
       setFormDetails({ title: "", content: "", tags: "", cover: "" });
       setIsModalOpen(false);
       dispatch(setLoading(false));
+      toast.success("Blog Updated successfully");
     } catch (error) {
-      if (error.response?.data.success === false) {
-        dispatch(setError("Something went wrong while submiting the form"));
-      } else {
-        dispatch(setError(error?.message || "something went wrong"));
-      }
+      const message =
+        error.response?.data?.message ||
+        error?.message ||
+        "Something went wrong while submiting the form";
+      dispatch(setError(message));
+      toast.error(message);
       console.log(error);
     }
   };
