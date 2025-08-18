@@ -11,8 +11,8 @@ const protectedRequest = async (requestFn) => {
                 localStorage.setItem("token", response.data.accessToken)
                 return await requestFn()
             } catch (error) {
-                localStorage.removeItem("token")
-                localStorage.removeItem("user")
+                // localStorage.removeItem("token")
+                // localStorage.removeItem("user")
                 // window.location.reload() 
                 console.log(error);
             }
