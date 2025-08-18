@@ -5,6 +5,13 @@ import { uploadOnCloudinary } from "../../utils/cloudinary.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
+const options = {
+    httpOnly: true,
+    secure: true,           // must be true in production HTTPS
+    sameSite: "None",       // allows cross-site cookies
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 1 week
+}
+
 const registerController = {
     register: async (req, res) => {
         // CHECKLIST
@@ -53,10 +60,6 @@ const registerController = {
 
             const createdUser = await User.findById(newUser._id).select("-password -refreshToken")
 
-            const options = {
-                httpOnly: true,
-                secure: true
-            }
             return res
                 .status(201)
                 .cookie("accessToken", accessToken, options)

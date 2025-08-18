@@ -4,6 +4,13 @@ import { ApiResponse } from "../../utils/ApiResponse.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
+
+const options = {
+    httpOnly: true,
+    secure: true,           // must be true in production HTTPS
+    sameSite: "None",       // allows cross-site cookies
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 1 week
+}
 const loginController = {
     login: async (req, res) => {
         // req body -> data
@@ -45,12 +52,6 @@ const loginController = {
 
             const userResponse = await User.findById(user._id).select("-password -refreshToken")
 
-            const options = {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'Strict',
-            }
-
             return res
                 .status(200)
                 .cookie("accessToken", accessToken, options)
@@ -70,11 +71,6 @@ const loginController = {
                     refreshToken: null
                 }
             }, { new: true })
-            const options = {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'Strict',
-            }
             return res
                 .status(200)
                 .clearCookie("accessToken", options)
