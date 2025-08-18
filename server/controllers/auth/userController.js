@@ -30,7 +30,7 @@ const userController = {
                 return res.status(401).json(new ApiError(401, "Invalid refresh token"))
             }
             if (incomingRefreshToken !== user?.refreshToken) {
-                return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options)
+                return res.status(401).clearCookie("accessToken", options).clearCookie("refreshToken", options)
                     .json(new ApiError(401, " refresh token is expired or used"))
             }
 
