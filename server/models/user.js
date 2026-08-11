@@ -34,7 +34,7 @@ const userSchema = new Schema({
     refreshToken: {
         type: String,
     }
-}, { typestamps: true })
+}, { timestamps: true })
 
 
 export const User = mongoose.model("User", userSchema)
