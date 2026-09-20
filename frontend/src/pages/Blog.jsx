@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteBlog, getBlog } from "../api/blog";
+import {
+  addComment,
+  deleteComment,
+  deleteBlog,
+  getBlog,
+  getComments,
+} from "../api/blog";
 import { useDispatch, useSelector } from "react-redux";
 import { setError, setLoading } from "../features/blogSlice";
 import { Editblog } from "../components/Blog/EditBlog";
+import toast from "react-hot-toast";
 
 const Blog = () => {
   const dispatch = useDispatch();
@@ -16,6 +23,8 @@ const Blog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMyBlog, setIsMyBlog] = useState(false);
   const [blog, setBlog] = useState({});
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
 
   useEffect(() => {
     const getSingleBlog = async () => {
@@ -26,6 +35,8 @@ const Blog = () => {
           ? setIsMyBlog(true)
           : setIsMyBlog(false);
         setBlog(response.data);
+        const commentsResponse = await getComments(id);
+        setComments(commentsResponse.data.comments || []);
         dispatch(setLoading(false));
       } catch (error) {
         const message =
@@ -58,6 +69,35 @@ const Blog = () => {
         "server error! please try again";
       dispatch(setError(message));
       console.log(error);
+    }
+  };
+
+  const submitComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    try {
+      const response = await addComment(id, commentText.trim());
+      setComments((prev) => [...prev, response.data.comment]);
+      setCommentText("");
+      toast.success("Comment added");
+    } catch (error) {
+      const message = error.response?.data?.message || "Unable to add comment";
+      toast.error(message);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(id, commentId);
+      setComments((prev) =>
+        prev.filter((comment) => comment._id !== commentId),
+      );
+      toast.success("Comment deleted");
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Unable to delete comment";
+      toast.error(message);
     }
   };
 
@@ -134,6 +174,74 @@ const Blog = () => {
           </div>
         </div>
       </article>
+
+      <section className="mt-8 bg-white rounded-2xl shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Comments</h2>
+
+        <form
+          onSubmit={submitComment}
+          className="mb-6 flex flex-col sm:flex-row gap-3"
+        >
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            rows="3"
+            placeholder="Write a comment..."
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            className="self-start sm:self-end bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700"
+          >
+            Post Comment
+          </button>
+        </form>
+
+        <div className="space-y-4">
+          {comments.length === 0 ? (
+            <p className="text-gray-500">
+              No comments yet. Be the first to comment.
+            </p>
+          ) : (
+            comments.map((comment) => (
+              <div
+                key={comment._id}
+                className="border rounded-xl p-4 bg-gray-50"
+              >
+                <div className="flex justify-between items-start gap-3">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={comment.author?.avatar}
+                      alt={comment.author?.username}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <div>
+                      <p className="font-semibold text-gray-800">
+                        {comment.author?.username}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {comment.author?._id === user?._id && (
+                    <button
+                      onClick={() => handleDeleteComment(comment._id)}
+                      className="text-red-500 text-sm hover:underline"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+                <p className="mt-3 text-gray-700 whitespace-pre-wrap">
+                  {comment.text}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
 
       {isModalOpen && (
         <Editblog

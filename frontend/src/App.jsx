@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getCurrentUser } from "./api/auth";
 import { setUser } from "./features/authSlice";
@@ -13,6 +13,7 @@ import {
 import MyBlogs from "./pages/MyBlogs";
 import { Toaster } from "react-hot-toast";
 import Profile from "./pages/Profile";
+import Chat from "./pages/Chat";
 
 const App = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -109,7 +110,7 @@ const App = () => {
             }
           />
           <Route
-            path="/myBlogs"
+            path="/my-blogs"
             element={
               <ProtectedRoute>
                 <MyBlogs />
@@ -117,10 +118,22 @@ const App = () => {
             }
           />
           <Route
+            path="/myBlogs"
+            element={<Navigate to="/my-blogs" replace />}
+          />
+          <Route
             path="/blog/:id"
             element={
               <ProtectedRoute>
                 <Blog />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Chat />
               </ProtectedRoute>
             }
           />

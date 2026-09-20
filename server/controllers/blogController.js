@@ -3,6 +3,7 @@ import { User } from "../models/user.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary, getPublicIdFromUrl, destoyImage } from "../utils/cloudinary.js"
+import { buildBlogQuery, buildBlogSort, normalizeBlogQueryOptions } from "../utils/blogQuery.js"
 
 const blogController = {
     async addBlog(req, res) {
@@ -36,10 +37,59 @@ const blogController = {
 
     async getBlogs(req, res) {
         try {
-            const blogs = await Blog.find().select("-__v")
-            const myBlogs = blogs.filter(blog => blog.creatorUsername == req.user.username)
+            const { page, limit, search, tag, sort } = normalizeBlogQueryOptions(req.query)
+            const query = buildBlogQuery({ search, tag })
+            const sortOptions = buildBlogSort(sort)
 
-            return res.status(200).json(new ApiResponse(200, { blogs, myBlogs }, blogs.length ? "Success" : "No blogs found"));
+            const totalBlogs = await Blog.countDocuments(query)
+            const totalPages = Math.max(Math.ceil(totalBlogs / limit), 1)
+            const safePage = Math.min(page, totalPages)
+
+            const blogs = await Blog.find(query)
+                .select("-__v")
+                .sort(sortOptions)
+                .skip((safePage - 1) * limit)
+                .limit(limit)
+
+            return res.status(200).json(new ApiResponse(200, {
+                blogs,
+                pagination: {
+                    page: safePage,
+                    limit,
+                    totalBlogs,
+                    totalPages,
+                }
+            }, totalBlogs ? "Success" : "No blogs found"));
+        } catch (error) {
+            return res.status(500).json(new ApiError(500, error.message || "Internal server error"))
+        }
+    },
+
+    async getMyBlogs(req, res) {
+        try {
+            const { page, limit, search, sort } = normalizeBlogQueryOptions(req.query)
+            const query = buildBlogQuery({ search, creator: req.user._id })
+            const sortOptions = buildBlogSort(sort)
+
+            const totalBlogs = await Blog.countDocuments(query)
+            const totalPages = Math.max(Math.ceil(totalBlogs / limit), 1)
+            const safePage = Math.min(page, totalPages)
+
+            const blogs = await Blog.find(query)
+                .select("-__v")
+                .sort(sortOptions)
+                .skip((safePage - 1) * limit)
+                .limit(limit)
+
+            return res.status(200).json(new ApiResponse(200, {
+                blogs,
+                pagination: {
+                    page: safePage,
+                    limit,
+                    totalBlogs,
+                    totalPages,
+                }
+            }, totalBlogs ? "Success" : "No blogs found"));
         } catch (error) {
             return res.status(500).json(new ApiError(500, error.message || "Internal server error"))
         }

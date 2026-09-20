@@ -66,7 +66,7 @@ function Navbar() {
                 Explore
               </NavLink>
               <NavLink
-                to="/myBlogs"
+                to="/my-blogs"
                 className={({ isActive }) =>
                   `hover:underline ${
                     isActive ? "text-red-500" : "text-gray-700"
@@ -84,6 +84,16 @@ function Navbar() {
                 }
               >
                 Profile
+              </NavLink>
+              <NavLink
+                to="/chat"
+                className={({ isActive }) =>
+                  `hover:underline ${
+                    isActive ? "text-red-500" : "text-gray-700"
+                  }`
+                }
+              >
+                Chat
               </NavLink>
             </>
           )}
@@ -207,7 +217,7 @@ function Navbar() {
                 Explore
               </NavLink>
               <NavLink
-                to="/myBlogs"
+                to="/my-blogs"
                 className={({ isActive }) =>
                   `block px-4 py-2 rounded-md ${
                     isActive ? "text-red-500" : "text-gray-700"
@@ -227,6 +237,17 @@ function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Profile
+              </NavLink>
+              <NavLink
+                to="/chat"
+                className={({ isActive }) =>
+                  `block px-4 py-2 rounded-md ${
+                    isActive ? "text-red-500" : "text-gray-700"
+                  } hover:bg-gray-100 transition`
+                }
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Chat
               </NavLink>
             </>
           )}
