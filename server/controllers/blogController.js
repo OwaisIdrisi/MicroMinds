@@ -12,7 +12,7 @@ const blogController = {
             return res.status(400).json(new ApiError(400, "Title and content cannot be empty"));
         }
         console.log("tags=", tags);
-        const tagToArr = tags.split(",")
+        const tagToArr = tags ? tags.split(",") : []
         const formattedTags = tagToArr ? tagToArr.map(tag => tag.trim().toLowerCase()) : []
 
         let coverLocalPath = req.file?.path
